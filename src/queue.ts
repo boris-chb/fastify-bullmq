@@ -1,6 +1,6 @@
 import { ConnectionOptions, Queue, Worker } from 'bullmq';
 
-import { env } from '@/env.js';
+import { env } from '@/env';
 
 const redisURL = new URL(env.REDIS_URL);
 

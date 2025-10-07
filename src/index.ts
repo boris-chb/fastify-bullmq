@@ -1,11 +1,12 @@
-import { createBullBoard } from '@bull-board/api';
-import { FastifyAdapter } from '@bull-board/fastify';
-import Fastify, { type FastifyInstance, type FastifyRequest } from 'fastify';
-import { Server, IncomingMessage, ServerResponse } from 'http';
-import { env } from '@/env.js';
+import { env } from '@/env';
+import { createQueue, setupQueueProcessor } from '@/queue';
 
-import { createQueue, setupQueueProcessor } from '@/queue.js';
+import Fastify, { type FastifyInstance, type FastifyRequest } from 'fastify';
+import { IncomingMessage, Server, ServerResponse } from 'http';
+
 import { BullMQAdapter } from '@bull-board/api/bullMQAdapter';
+import { FastifyAdapter } from '@bull-board/fastify';
+import { createBullBoard } from '@bull-board/api';
 
 interface AddJobQueryString {
   id: string;
