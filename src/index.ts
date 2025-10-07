@@ -52,7 +52,7 @@ const run = async () => {
 
   console.log(env);
 
-  await server.listen({ port: env.PORT, host: env.RAILWAY_PUBLIC_DOMAIN });
+  await server.listen({ port: env.PORT, host: '0.0.0.0' });
   console.log(
     `Server running: http://localhost:${env.PORT}/add-job?id=1&email=hello%40world.com`
   );
