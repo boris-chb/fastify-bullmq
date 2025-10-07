@@ -20,13 +20,13 @@ const run = async () => {
     Fastify();
 
   const serverAdapter = new FastifyAdapter();
-  serverAdapter.setBasePath('/'); // **Must set before registering**
+  serverAdapter.setBasePath('/');
   createBullBoard({
     queues: [new BullMQAdapter(welcomeEmailQueue)],
     serverAdapter,
   });
 
-  server.register(serverAdapter.registerPlugin()); // no prefix/basePath needed in v5
+  server.register(serverAdapter.registerPlugin());
 
   server.get(
     '/add-job',
