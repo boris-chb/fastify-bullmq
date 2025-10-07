@@ -12,6 +12,8 @@ const connection: ConnectionOptions = {
   family: 0,
 };
 
+console.log(connection);
+
 export const createQueue = (name: string) => new Queue(name, { connection });
 
 export const setupQueueProcessor = async (queueName: string) => {

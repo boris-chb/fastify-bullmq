@@ -5,4 +5,5 @@ export const env = envsafe({
   REDIS_URL: str({
     devDefault: 'redis://defaultUser:defaultPass@localhost:6379',
   }),
+  RAILWAY_PUBLIC_DOMAIN: str({ devDefault: 'localhost' }),
 });
