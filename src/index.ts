@@ -1,11 +1,11 @@
 import { createBullBoard } from '@bull-board/api';
-import { BullMQAdapter } from '@bull-board/api/bullMQAdapter';
 import { FastifyAdapter } from '@bull-board/fastify';
-import fastify, { FastifyInstance, FastifyRequest } from 'fastify';
+import Fastify, { type FastifyInstance, type FastifyRequest } from 'fastify';
 import { Server, IncomingMessage, ServerResponse } from 'http';
-import { env } from './env';
+import { env } from '@/env.js';
 
-import { createQueue, setupQueueProcessor } from './queue';
+import { createQueue, setupQueueProcessor } from '@/queue.js';
+import { BullMQAdapter } from '@bull-board/api/bullMQAdapter';
 
 interface AddJobQueryString {
   id: string;
@@ -17,18 +17,16 @@ const run = async () => {
   await setupQueueProcessor(welcomeEmailQueue.name);
 
   const server: FastifyInstance<Server, IncomingMessage, ServerResponse> =
-    fastify();
+    Fastify();
 
   const serverAdapter = new FastifyAdapter();
+  serverAdapter.setBasePath('/'); // **Must set before registering**
   createBullBoard({
     queues: [new BullMQAdapter(welcomeEmailQueue)],
     serverAdapter,
   });
-  serverAdapter.setBasePath('/');
-  server.register(serverAdapter.registerPlugin(), {
-    prefix: '/',
-    basePath: '/',
-  });
+
+  server.register(serverAdapter.registerPlugin()); // no prefix/basePath needed in v5
 
   server.get(
     '/add-job',
@@ -37,37 +35,23 @@ const run = async () => {
         querystring: {
           type: 'object',
           properties: {
-            title: { type: 'string' },
             id: { type: 'string' },
+            email: { type: 'string' },
           },
+          required: ['id', 'email'],
         },
       },
     },
     (req: FastifyRequest<{ Querystring: AddJobQueryString }>, reply) => {
-      if (
-        req.query == null ||
-        req.query.email == null ||
-        req.query.id == null
-      ) {
-        reply
-          .status(400)
-          .send({ error: 'Requests must contain both an id and a email' });
-
-        return;
-      }
-
-      const { email, id } = req.query;
+      const { id, email } = req.query;
       welcomeEmailQueue.add(`WelcomeEmail-${id}`, { email });
-
-      reply.send({
-        ok: true,
-      });
+      reply.send({ ok: true });
     }
   );
 
   await server.listen({ port: env.PORT, host: '0.0.0.0' });
   console.log(
-    `To populate the queue and demo the UI, run: curl https://${env.RAILWAY_STATIC_URL}/add-job?id=1&email=hello%40world.com`
+    `Server running: http://localhost:${env.PORT}/add-job?id=1&email=hello%40world.com`
   );
 };
 
