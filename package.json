@@ -12,9 +12,7 @@
     "src"
   ],
   "scripts": {
-    "build": "dts build",
-    "lint": "dts lint",
-    "watch": "dts watch",
+    "build": "bun build src/index.ts --target bun --outdir dist",
     "start": "bun run src/index.ts",
     "dev": "bun run --watch src/index.ts"
   },
