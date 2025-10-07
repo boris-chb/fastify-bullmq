@@ -1,6 +1,7 @@
-import { envsafe, str } from 'envsafe';
+import { envsafe, port, str } from 'envsafe';
 
 export const env = envsafe({
+  PORT: port({ devDefault: 3000 }),
   REDIS_URL: str({
     devDefault: 'redis://defaultUser:defaultPass@localhost:6379',
   }),
